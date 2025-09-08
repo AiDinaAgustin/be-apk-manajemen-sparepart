@@ -72,11 +72,7 @@
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h2>LAPORAN PERMINTAAN SPAREPART</h2>
-    </div>
-    
+<body>    
     <div class="info">
         <div class="info-row">
             <div class="info-left">
@@ -84,8 +80,8 @@
                 <div class="info-item"><strong>Petugas Gudang:</strong> {{ $admin_name }}</div>
             </div>
             <div class="info-right">
-                <div class="info-item"><strong>Tanggal Permintaan:</strong> {{ date('d/m/Y', strtotime($transaction->created_at)) }}</div>
-                <div class="info-item"><strong>Waktu Cetak:</strong> {{ $print_time }}</div>
+            <div class="info-item"><strong>Tanggal Permintaan:</strong> {{ date('d F Y', strtotime($transaction->created_at)) }}</div>
+            <div class="info-item"><strong>Waktu Cetak:</strong> {{ date('d F Y H:i:s', strtotime($print_time)) }}</div>
             </div>
         </div>
     </div>
@@ -96,7 +92,8 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <th>No</th>
+                <th>No Sparepart</th>
                 <th>Nama Sparepart</th>
                 <th>Jumlah</th>
             </tr>
@@ -104,6 +101,7 @@
         <tbody>
             @foreach($transaction->details as $detail)
             <tr>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $detail->sparepart->id }}</td>
                 <td>{{ $detail->sparepart->name_sparepart }}</td>
                 <td>{{ $detail->jumlah }}</td>
