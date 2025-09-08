@@ -70,21 +70,22 @@ class SparepartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sparepart $sparepart) : JsonResponse
+    public function update(Request $request, Sparepart $sparepart): JsonResponse
     {
-        $validated = $request->validate([
-            'name_sparepart' => 'sometimes|string|max:255',
-            'minimal_stok' => 'sometimes|integer|min:0',
-            'stok' => 'sometimes|integer|min:0',
-        ]);
-
-        $sparepart->update($validated);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Sparepart updated successfully',
-            'data' => $sparepart
-        ]);
+            // Validasi input
+            $validated = $request->validate([
+                'name_sparepart' => 'sometimes|string|max:255',
+                'minimal_stok' => 'sometimes|integer|min:0',
+                'stok' => 'sometimes|integer|min:0',
+            ]);
+    
+            $sparepart->update($validated);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Sparepart updated successfully',
+                'data' => $sparepart
+            ]);
     }
 
     /**
