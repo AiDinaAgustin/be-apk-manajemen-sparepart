@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class TransactionExport implements FromCollection, WithHeadings, WithMapping, WithTitle, WithStyles, ShouldAutoSize
 {
     protected $transaction;
+    protected $rowNumber = 0; // Tambahkan counter untuk nomor urut
 
     public function __construct(Transaction $transaction)
     {
@@ -32,17 +33,20 @@ class TransactionExport implements FromCollection, WithHeadings, WithMapping, Wi
         return [
             ['LAPORAN PERMINTAAN SPAREPART'],
             [''],
-            ['Nama Pemohon: ' . $this->transaction->nama_pemohon, '', 'Tanggal Permintaan: ' . Carbon::parse($this->transaction->created_at)->format('d/m/Y')],
-            ['Petugas Gudang: ' . Auth::user()->name, '', 'Waktu Cetak: ' . Carbon::now()->format('d/m/Y H:i:s')],
+            ['Nama Pemohon: ' . $this->transaction->nama_pemohon, '', 'Tanggal Permintaan: ' . Carbon::parse($this->transaction->created_at)->format('d F Y')],
+            ['Petugas Gudang: ' . Auth::user()->name, '', 'Waktu Cetak: ' . Carbon::now()->format('d F Y : H.i')],
             [''],
             ['DETAIL PERMINTAAN SPAREPART'],
-            ['ID', 'Nama Sparepart', 'Jumlah'],
+            ['No', 'No Spareparts', 'Nama Spareparts', 'Jumlah'],
         ];
     }
 
     public function map($detail): array
     {
+        $this->rowNumber++; 
+        
         return [
+            $this->rowNumber, 
             $detail->sparepart->id,
             $detail->sparepart->name_sparepart,
             $detail->jumlah,
@@ -56,18 +60,23 @@ class TransactionExport implements FromCollection, WithHeadings, WithMapping, Wi
 
     public function styles(Worksheet $sheet)
     {
-        // Merge title cell
-        $sheet->mergeCells('A1:C1');
+        // Merge title cell - perbaiki untuk 4 kolom
+        $sheet->mergeCells('A1:D1');
         
         // Set judul menjadi bold dan besar
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         
         // Bold subtitles
-        $sheet->getStyle('A7')->getFont()->setBold(true);
+        $sheet->getStyle('A6')->getFont()->setBold(true);
         
-        // Header tabel menjadi bold
-        $sheet->getStyle('A8:C8')->getFont()->setBold(true);
+        // Header tabel menjadi bold - perbaiki untuk 4 kolom
+        $sheet->getStyle('A7:D7')->getFont()->setBold(true);
+
+        $dataLastRow = $sheet->getHighestRow();
+        $sheet->getStyle('A8:D' . $dataLastRow)->getAlignment()
+          ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    
         
         // Tambahkan tempat tanda tangan di bawah
         $lastRow = $sheet->getHighestRow() + 3;
@@ -78,11 +87,11 @@ class TransactionExport implements FromCollection, WithHeadings, WithMapping, Wi
         $sheet->setCellValue('A' . ($lastRow + 4), $this->transaction->nama_pemohon);
         $sheet->getStyle('A' . ($lastRow + 3) . ':A' . ($lastRow + 3))->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         
-        // Signature on the right
-        $sheet->setCellValue('C' . $lastRow, 'Petugas Gudang');
-        $sheet->getStyle('C' . $lastRow)->getFont()->setBold(true);
-        $sheet->setCellValue('C' . ($lastRow + 4), Auth::user()->name);
-        $sheet->getStyle('C' . ($lastRow + 3) . ':C' . ($lastRow + 3))->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+        // Signature on the right - pindahkan ke kolom D karena sekarang ada 4 kolom
+        $sheet->setCellValue('D' . $lastRow, 'Petugas Gudang');
+        $sheet->getStyle('D' . $lastRow)->getFont()->setBold(true);
+        $sheet->setCellValue('D' . ($lastRow + 4), Auth::user()->name);
+        $sheet->getStyle('D' . ($lastRow + 3) . ':D' . ($lastRow + 3))->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         
         return $sheet;
     }

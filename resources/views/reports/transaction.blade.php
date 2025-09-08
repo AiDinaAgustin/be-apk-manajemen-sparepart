@@ -72,7 +72,10 @@
         }
     </style>
 </head>
-<body>    
+<body> 
+    <div class="header">
+        <h2>LAPORAN PERMINTAAN SPAREPART</h2>
+    </div>   
     <div class="info">
         <div class="info-row">
             <div class="info-left">
@@ -81,20 +84,18 @@
             </div>
             <div class="info-right">
             <div class="info-item"><strong>Tanggal Permintaan:</strong> {{ date('d F Y', strtotime($transaction->created_at)) }}</div>
-            <div class="info-item"><strong>Waktu Cetak:</strong> {{ date('d F Y H:i:s', strtotime($print_time)) }}</div>
-            </div>
+            <div class="info-item"><strong>Waktu Cetak:</strong> {{ date('d F Y : H.i', strtotime($print_time)) }}</div>            </div>
         </div>
     </div>
     
     <div class="clearfix"></div>
     
-    <h3>DETAIL PERMINTAAN SPAREPART</h3>
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>No Sparepart</th>
-                <th>Nama Sparepart</th>
+                <th>No Spareparts</th>
+                <th>Nama Spareparts</th>
                 <th>Jumlah</th>
             </tr>
         </thead>
