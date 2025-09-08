@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SparepartController;
 use App\Http\Controllers\TransactionController;
 
@@ -55,6 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::post('/{transaction}/reject', [TransactionController::class, 'reject'])
             ->middleware('permission:transaction.reject');
+    });
+
+    Route::prefix('/reports')->middleware('permission:report.export')->group(function () {
+        Route::get('/transaction/{transaction}/pdf', [ReportController::class, 'exportPDF']);
+        Route::get('/transaction/{transaction}/excel', [ReportController::class, 'exportExcel']);
+        Route::get('/transactions', [ReportController::class, 'exportTransactionReport']);
     });
 });
 
