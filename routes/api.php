@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SparepartController;
@@ -62,6 +63,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/transaction/{transaction}/pdf', [ReportController::class, 'exportPDF']);
         Route::get('/transaction/{transaction}/excel', [ReportController::class, 'exportExcel']);
         Route::get('/transactions', [ReportController::class, 'exportTransactionReport']);
+    });
+
+    Route::prefix('/roles')->middleware('permission:user.set_role_permission')->group(function () {
+        Route::get('/', [RoleController::class, 'index']);
+        Route::get('/permissions', [RoleController::class, 'permissions']);
+        Route::get('/{role}', [RoleController::class, 'show']);
     });
 });
 

@@ -74,6 +74,7 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         $staffRole->syncPermissions([
+            'sparepart.read',
             'sparepart.read_list',
             'transaction.create',
             'transaction.read_own',
