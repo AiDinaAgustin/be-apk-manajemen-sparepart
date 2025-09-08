@@ -20,22 +20,25 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
-
-        $user = User::where('email', $request->email)->first();
-
+    
         if(!Auth::attempt($validatedData)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Login failed. Please check your credentials.'
             ], 401);
         }
-
+    
+        $user = User::where('email', $request->email)->first();
         $token = $user->createToken($user->name)->plainTextToken;
-
+        
+        // Load user roles dan permissions
+        $userData = $user->load('roles')->toArray();
+        $userData['all_permissions'] = $user->getAllPermissions()->pluck('name');
+    
         return response()->json([
             'success' => true,
             'access_token' => $token,
-            'user' => $user
+            'user' => $userData
         ], 200);
     }
 
