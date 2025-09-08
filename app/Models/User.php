@@ -19,6 +19,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+     /**
+     * @method bool can($ability, $arguments = [])
+     */
     protected $fillable = [
         'name',
         'email',

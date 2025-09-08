@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SparepartController;
+use App\Http\Controllers\TransactionController;
 
 Route::post('/login', [AuthController::class, 'store']);
 
@@ -34,6 +35,26 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Staff only route
         Route::get('/list/view', [SparepartController::class, 'list'])->middleware('permission:sparepart.read_list');
+    });
+
+    Route::prefix('/transactions')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])
+            ->middleware(['permission:transaction.read_all|transaction.read_own']);
+        
+        Route::post('/', [TransactionController::class, 'store'])
+            ->middleware('permission:transaction.create');
+        
+        Route::get('/{transaction}', [TransactionController::class, 'show'])
+            ->middleware(['permission:transaction.read_all|transaction.read_own']);
+        
+        Route::put('/{transaction}', [TransactionController::class, 'update'])
+            ->middleware('permission:transaction.update_own');
+        
+        Route::post('/{transaction}/approve', [TransactionController::class, 'approve'])
+            ->middleware('permission:transaction.approve');
+        
+        Route::post('/{transaction}/reject', [TransactionController::class, 'reject'])
+            ->middleware('permission:transaction.reject');
     });
 });
 
